@@ -8,7 +8,7 @@ using System.Threading;
 
 namespace Pickaxe.Watcher
 {
-    class StreamListener : QProcess, IDisposable
+    class StreamListener : QTask, IDisposable
     {
         private const char UNIT_SEPARATOR = '\u241F';
         private StreamListenerOptions _options;
@@ -84,18 +84,18 @@ namespace Pickaxe.Watcher
         void stream_StreamStarted(object sender, EventArgs e)
         {
             this.SetWriter(GetConfiguredFilename());
-            this.OnProcessProgress(new MessageEventArgs("The Twitter stream has been started.", MessageType.Info));
+            this.OnProgress(new MessageEventArgs("The Twitter stream has been started.", MessageType.Info));
         }
         void stream_StreamStopped(object sender, EventArgs e)
         {
             var args = (StreamExceptionEventArgs)e;
 
             _writer.Close();
-            this.OnProcessProgress(new MessageEventArgs("The Twitter stream has been stopped.", MessageType.Info));
+            this.OnProgress(new MessageEventArgs("The Twitter stream has been stopped.", MessageType.Info));
+            
+            this.OnFailed(new MessageEventArgs(args.Exception.Message, MessageType.Error));
 
-            this.OnProcessFailed(new MessageEventArgs(args.Exception.Message, MessageType.Error));
-
-            this.OnProcessProgress(new MessageEventArgs(MessageType.Info, MessagePriority.Medium, "Restarting... New start time: {0}", DateTime.Now.AddMinutes(_options.RestartTime).ToShortTimeString()));
+            this.OnProgress(new MessageEventArgs(MessageType.Info, MessagePriority.Medium, "Restarting... New start time: {0}", DateTime.Now.AddMinutes(_options.RestartTime).ToShortTimeString()));
             System.Threading.Thread.Sleep(TimeSpan.FromMinutes(_options.RestartTime));
 
             this.StreamTweets();
@@ -104,7 +104,7 @@ namespace Pickaxe.Watcher
         void stream_TweetReceived(object sender, IO.Twitter.Events.TweetReceivedEventArgs e)
         {
             if (_options.ShowCapture)
-                this.OnProcessProgress(new MessageEventArgs(e.Tweet.ToString(), MessageType.Data));
+                this.OnProgress(new MessageEventArgs(e.Tweet.ToString(), MessageType.Data));
         }
 
         void stream_JsonObjectReceived(object sender, IO.Twitter.Events.JsonObjectEventArgs e)
@@ -125,7 +125,7 @@ namespace Pickaxe.Watcher
             }
 
             if (!_options.ShowCapture)
-                this.OnProcessProgress(new MessageEventArgs(string.Format("Captured Tweets: {0}", this.TweetReceived), MessageType.Progress));
+                this.OnProgress(new MessageEventArgs(string.Format("Captured Tweets: {0}", this.TweetReceived), MessageType.Progress));
         }
 
         public void Dispose()

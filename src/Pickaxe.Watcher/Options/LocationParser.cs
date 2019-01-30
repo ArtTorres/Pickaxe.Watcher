@@ -1,12 +1,12 @@
-﻿using QApp.Options;
+﻿using MagnetArgs;
+using Pickaxe.Watcher.IO.Twitter.Model;
 using System.IO;
 using System.Runtime.Serialization.Json;
 using System.Text;
-using  Pickaxe.Watcher.IO.Twitter.Model;
 
 namespace Pickaxe.Watcher.Options
 {
-    class LocationParser : IOptionParser
+    class LocationParser : IParser
     {
         public object Parse(string value)
         {

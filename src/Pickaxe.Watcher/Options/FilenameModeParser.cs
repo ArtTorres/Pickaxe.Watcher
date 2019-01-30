@@ -1,8 +1,8 @@
-﻿using QApp.Options;
+﻿using MagnetArgs;
 
 namespace Pickaxe.Watcher.Options
 {
-    class FilenameModeParser : IOptionParser
+    class FilenameModeParser : IParser
     {
         public object Parse(string value)
         {

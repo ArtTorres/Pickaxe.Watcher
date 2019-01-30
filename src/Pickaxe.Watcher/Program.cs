@@ -1,34 +1,35 @@
 ﻿using QApp;
-using QApp.Options;
-using  Pickaxe.Watcher.IO.Twitter.Security;
+using Pickaxe.Watcher.IO.Twitter.Security;
+using MagnetArgs;
+using QApp.Documentation;
 
 namespace Pickaxe.Watcher
 {
-    class ApplicationOptions : QOption
+    class ApplicationOptions : MagnetOption
     {
-        [Option("--api-key", Alias = "-apk")]
+        [Arg("--api-key", Alias = "-apk")]
         [Help("Sets the aplication key for Twitter authentication.", Example = "--api-key <code>", Group = "Authentication", Order = 20)]
         public string ApiKey { get; set; }
 
-        [Option("--api-secret", Alias = "-aps")]
+        [Arg("--api-secret", Alias = "-aps")]
         [Help("Sets the aplication key for Twitter authentication.", Example = "--api-secret <code>", Group = "Authentication", Order = 21)]
         public string ApiSecret { get; set; }
 
-        [Option("--token-key", Alias = "-tkk")]
+        [Arg("--token-key", Alias = "-tkk")]
         [Help("Sets the aplication key for Twitter authentication.", Example = "--token-key <code>", Group = "Authentication", Order = 22)]
         public string TokenKey { get; set; }
 
-        [Option("--token-secret", Alias = "-tks")]
+        [Arg("--token-secret", Alias = "-tks")]
         [Help("Sets the aplication key for Twitter authentication.", Example = "--token-secret <code>", Group = "Authentication", Order = 23)]
         public string TokenSecret { get; set; }
     }
 
     class Application : QApplication
     {
-        [OptionSet(1)]
+        [OptionSet]
         private ApplicationOptions AppOptions { get; set; }
 
-        [OptionSet(2)]
+        [OptionSet]
         private StreamListenerOptions ProcessOptions { get; set; }
 
         public override void ExecutionProcess()
@@ -61,7 +62,7 @@ namespace Pickaxe.Watcher
 
             using (var process = new StreamListener(this.ProcessOptions))
             {
-                this.RegisterProcess(process);
+                this.MonitorTask(process);
                 process.Start();
             }
         }

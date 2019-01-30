@@ -1,9 +1,9 @@
-﻿using QApp.Options;
-using  Pickaxe.Watcher.IO.Twitter.Stream;
+﻿using MagnetArgs;
+using Pickaxe.Watcher.IO.Twitter.Stream;
 
 namespace Pickaxe.Watcher.Options
 {
-    class MatchConditionParser : IOptionParser
+    class MatchConditionParser : IParser
     {
         public object Parse(string value)
         {

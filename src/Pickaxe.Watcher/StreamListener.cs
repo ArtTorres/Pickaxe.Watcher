@@ -1,29 +1,34 @@
-﻿using Pickaxe.Watcher.IO.Twitter.Events;
+﻿using EasyApp;
+using EasyApp.Events;
+using Pickaxe.Watcher.IO.Twitter.Events;
 using Pickaxe.Watcher.IO.Twitter.Stream;
-using QApp;
-using QApp.Events;
 using System;
 using System.IO;
 using System.Threading;
 
 namespace Pickaxe.Watcher
 {
-    class StreamListener : QTask, IDisposable
+    class StreamListener : EasyTask, IDisposable
     {
+        public SecurityOptions SecurityOptions { get; set; }
+        public StreamListenerOptions Options { get; set; }
+
         private const char UNIT_SEPARATOR = '\u241F';
-        private StreamListenerOptions _options;
         private StreamWriter _writer;
         private int _secuence = 0;
 
         public int TweetReceived { get; private set; }
 
-        public StreamListener(StreamListenerOptions options)
+        public override void BeforeStart()
         {
-            _options = options;
-
             // Restart time default value.
-            if (_options.RestartTime == 0)
-                _options.RestartTime = 5;
+            if (this.Options.RestartTime == 0)
+                this.Options.RestartTime = 5;
+        }
+
+        public override void AfterCompleted()
+        {
+            this.Dispose();
         }
 
         public override void Start()
@@ -35,16 +40,16 @@ namespace Pickaxe.Watcher
         private void StreamTweets()
         {
             var stream = new TwitterStream(
-                _options.Credential.ApiKey,
-                _options.Credential.ApiSecret,
-                _options.Credential.TokenKey,
-                _options.Credential.TokenSecret
+                this.SecurityOptions.Credential.ApiKey,
+                this.SecurityOptions.Credential.ApiSecret,
+                this.SecurityOptions.Credential.TokenKey,
+                this.SecurityOptions.Credential.TokenSecret
             );
 
             // Set Proxy
-            if (!string.IsNullOrEmpty(_options.ProxyConnectionString))
+            if (!string.IsNullOrEmpty(this.Options.ProxyConnectionString))
             {
-                stream.SetProxy(_options.ProxyConnectionString);
+                stream.SetProxy(this.Options.ProxyConnectionString);
             }
 
             stream.StreamStarted += stream_StreamStarted;
@@ -52,24 +57,24 @@ namespace Pickaxe.Watcher
             stream.TweetReceived += stream_TweetReceived;
             stream.JsonObjectReceived += stream_JsonObjectReceived;
 
-            stream.Start(_options.Track, _options.MatchCondition, _options.SearchLocations);
+            stream.Start(this.Options.Track, this.Options.MatchCondition, this.Options.SearchLocations);
         }
 
         private string GetConfiguredFilename()
         {
-            if (_options.Mode == FilenameMode.Secuence)
+            if (this.Options.Mode == FilenameMode.Secuence)
             {
-                int ix = _options.Filename.LastIndexOf('.') + 1;
-                return _options.Filename.Substring(0, ix) + _secuence++ + ".data";
+                int ix = this.Options.Filename.LastIndexOf('.') + 1;
+                return this.Options.Filename.Substring(0, ix) + _secuence++ + ".data";
             }
-            else if (_options.Mode == FilenameMode.Date)
+            else if (this.Options.Mode == FilenameMode.Date)
             {
-                var dir = Path.GetDirectoryName(_options.Filename);
+                var dir = Path.GetDirectoryName(this.Options.Filename);
                 return Path.Combine(dir, string.Format("{0:yyyyMMdd_HHmmss}.data", DateTime.Now));
             }
             else
             {
-                return _options.Filename;
+                return this.Options.Filename;
             }
         }
 
@@ -81,33 +86,33 @@ namespace Pickaxe.Watcher
             _writer = new StreamWriter(filename, true);
         }
 
-        void stream_StreamStarted(object sender, EventArgs e)
+        private void stream_StreamStarted(object sender, EventArgs e)
         {
             this.SetWriter(GetConfiguredFilename());
             this.OnProgress(new MessageEventArgs("The Twitter stream has been started.", MessageType.Info));
         }
-        void stream_StreamStopped(object sender, EventArgs e)
+        private void stream_StreamStopped(object sender, EventArgs e)
         {
             var args = (StreamExceptionEventArgs)e;
 
             _writer.Close();
             this.OnProgress(new MessageEventArgs("The Twitter stream has been stopped.", MessageType.Info));
-            
+
             this.OnFailed(new MessageEventArgs(args.Exception.Message, MessageType.Error));
 
-            this.OnProgress(new MessageEventArgs(MessageType.Info, MessagePriority.Medium, "Restarting... New start time: {0}", DateTime.Now.AddMinutes(_options.RestartTime).ToShortTimeString()));
-            System.Threading.Thread.Sleep(TimeSpan.FromMinutes(_options.RestartTime));
+            this.OnProgress(new MessageEventArgs(MessageType.Info, Priority.Medium, "Restarting... New start time: {0}", DateTime.Now.AddMinutes(this.Options.RestartTime).ToShortTimeString()));
+            System.Threading.Thread.Sleep(TimeSpan.FromMinutes(this.Options.RestartTime));
 
             this.StreamTweets();
         }
 
-        void stream_TweetReceived(object sender, IO.Twitter.Events.TweetReceivedEventArgs e)
+        private void stream_TweetReceived(object sender, IO.Twitter.Events.TweetReceivedEventArgs e)
         {
-            if (_options.ShowCapture)
+            if (this.Options.ShowCapture)
                 this.OnProgress(new MessageEventArgs(e.Tweet.ToString(), MessageType.Data));
         }
 
-        void stream_JsonObjectReceived(object sender, IO.Twitter.Events.JsonObjectEventArgs e)
+        private void stream_JsonObjectReceived(object sender, IO.Twitter.Events.JsonObjectEventArgs e)
         {
             lock (_writer)
             {
@@ -116,7 +121,7 @@ namespace Pickaxe.Watcher
             }
             this.TweetReceived++;
 
-            if (_options.TweetLimit > 0 && this.TweetReceived % _options.TweetLimit == 0)
+            if (this.Options.TweetLimit > 0 && this.TweetReceived % this.Options.TweetLimit == 0)
             {
                 // close writer and create a new one.
                 _writer.Flush();
@@ -124,7 +129,7 @@ namespace Pickaxe.Watcher
                 this.SetWriter(GetConfiguredFilename());
             }
 
-            if (!_options.ShowCapture)
+            if (!this.Options.ShowCapture)
                 this.OnProgress(new MessageEventArgs(string.Format("Captured Tweets: {0}", this.TweetReceived), MessageType.Progress));
         }
 

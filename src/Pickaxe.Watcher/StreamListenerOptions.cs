@@ -1,9 +1,8 @@
-﻿using MagnetArgs;
+﻿using EasyApp.Documentation;
+using MagnetArgs;
 using Pickaxe.Watcher.IO.Twitter.Model;
-using Pickaxe.Watcher.IO.Twitter.Security;
 using Pickaxe.Watcher.IO.Twitter.Stream;
 using Pickaxe.Watcher.Options;
-using QApp.Documentation;
 
 namespace Pickaxe.Watcher
 {
@@ -14,10 +13,8 @@ namespace Pickaxe.Watcher
         Secuence
     }
 
-    class StreamListenerOptions : MagnetOption
+    class StreamListenerOptions : MagnetSet
     {
-        public TwitterCredential Credential { get; set; }
-
         [Arg("--track", Alias = "-t")]
         [Help("Enable the search for twitter search terms.", Example = "--track \"@user\"", Group = "Execution", Order = 1)]
         public string Track { get; set; }

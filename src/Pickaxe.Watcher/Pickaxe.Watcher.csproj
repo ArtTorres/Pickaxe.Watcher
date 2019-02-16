@@ -61,14 +61,14 @@
     <Reference Include="Autofac, Version=3.5.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Autofac.3.5.2\lib\net40\Autofac.dll</HintPath>
     </Reference>
-    <Reference Include="MagnetArgs, Version=0.2.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ArturoTorres.MagnetArgs.0.2.2-beta\lib\net45\MagnetArgs.dll</HintPath>
+    <Reference Include="EasyApp, Version=0.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\EasyApp.0.2.1-alpha\lib\net45\EasyApp.dll</HintPath>
+    </Reference>
+    <Reference Include="MagnetArgs, Version=0.2.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\MagnetArgs.0.2.4-beta\lib\net45\MagnetArgs.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="QApp, Version=0.1.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ArturoTorres.QApp.0.1.0-alpha\lib\net45\QApp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -84,11 +84,12 @@
     <Reference Include="Tweetinvi, Version=1.2.0.1, Culture=neutral, PublicKeyToken=7247f14397bf67b9, processorArchitecture=MSIL">
       <HintPath>..\..\packages\TweetinviAPI.1.2.0.1\lib\net45\Tweetinvi.dll</HintPath>
     </Reference>
-    <Reference Include="TWidgets, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ArturoTorres.TWidgets.0.2.0-alpha\lib\net45\TWidgets.dll</HintPath>
+    <Reference Include="TWidgets, Version=0.4.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\TWidgets.0.4.0-alpha\lib\net45\TWidgets.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="SecurityOptions.cs" />
     <Compile Include="IO.Twitter\Events\JsonObjectEventArgs.cs" />
     <Compile Include="IO.Twitter\Events\LimitReachedEventArgs.cs" />
     <Compile Include="IO.Twitter\Events\StreamExceptionEventArgs.cs" />

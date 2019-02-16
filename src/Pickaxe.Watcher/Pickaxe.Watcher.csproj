@@ -11,7 +11,7 @@
 
   <ItemGroup>
     <PackageReference Include="EasyApp" Version="0.2.1-alpha" />
-    <PackageReference Include="TweetinviAPI" Version="1.3.0" />
+    <PackageReference Include="TweetinviAPI" Version="4.0.0" />
   </ItemGroup>
 
   <ItemGroup>

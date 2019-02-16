@@ -43,13 +43,7 @@ namespace Pickaxe.Watcher
                 }
                 else
                 {
-                    return new TwitterCredential()
-                    {
-                        ApiKey = Properties.Settings.Default.APIKEY,
-                        ApiSecret = Properties.Settings.Default.APISECRET,
-                        TokenKey = Properties.Settings.Default.TOKENKEY,
-                        TokenSecret = Properties.Settings.Default.TOKENSECRET
-                    };
+                    return new TwitterCredential();
                 }
             }
         }

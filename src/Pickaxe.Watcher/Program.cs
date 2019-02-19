@@ -6,7 +6,10 @@ namespace Pickaxe.Watcher
     {
         static void Main(string[] args)
         {
-            AppRunner.Execute<BasicApp>(args, new StreamListener());
+            using (var task = new StreamListener())
+            {
+                AppRunner.Execute<BasicApp>(args, task);
+            }
         }
     }
 }

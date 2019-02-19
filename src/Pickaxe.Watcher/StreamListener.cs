@@ -26,11 +26,6 @@ namespace Pickaxe.Watcher
                 this.Options.RestartTime = 5;
         }
 
-        public override void AfterCompleted()
-        {
-            this.Dispose();
-        }
-
         public override void Start()
         {
             var thread = new Thread(new ThreadStart(StreamTweets));
